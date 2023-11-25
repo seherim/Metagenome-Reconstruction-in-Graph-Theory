@@ -37,7 +37,7 @@ class MainMenu:         #for the functionalities of main screen...
         grp1.place(x=650,y=610)
         grp2.place(x=650, y=640)
         grp3.place(x=650, y=670)
-        self.ch_btn = tk.Button(self.root, text="Graph Theory Wonders", font=('Century Gothic', 18),command=self.OpenGTHome)
+        self.ch_btn = tk.Button(self.root, text="Graph Theory \U00002728Wonders\U00002728", font=('Century Gothic', 18),command=self.OpenGTHome)
         self.ch_btn.config(bg="plum4", fg="white")
         self.ch_btn.place(x=275, y=350)
         self.ch_btn.bind("<Enter>", self.on_enter)
