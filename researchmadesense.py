@@ -1,5 +1,5 @@
 
-# first we generate a connected graph which is undirected
+# first we generate a connected graph which is directed
 # (hence the use of the word strong)
 
 # 1

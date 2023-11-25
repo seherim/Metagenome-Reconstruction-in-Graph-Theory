@@ -2,55 +2,75 @@ import networkx as nx
 import random
 import matplotlib.pyplot as plt
 
-def node_safe_walk(graph):
-    if not nx.is_strongly_connected(graph):
-        raise ValueError("The graph is not strongly connected.")
+def generate_strongly_connected_graph(num_nodes, seed=None):
+    # Generate an undirected graph
+    G_undirected = nx.gn_graph(num_nodes, seed=seed)
 
-    # 1. Get the circular path created in the graph
-    circular_path = list(nx.simple_cycles(graph))[0]
+    # Convert the undirected graph to a directed graph
+    G_directed = nx.DiGraph(G_undirected)
 
-    # 2. Initialize certificates for each vertex
-    cert = {v: [v] for v in graph.nodes()}
+    # Ensure the directed graph is strongly connected
+    while not nx.is_strongly_connected(G_directed):
+        # Regenerate the directed graph until it is strongly connected
+        G_directed = nx.DiGraph(nx.gn_graph(num_nodes, seed=seed))
 
-    # 3. Loop for each vertex
-    for i in range(len(graph.nodes())):
-        # 4. Set Sk to empty set
+    return G_directed
+
+def compute_certificates(graph, circular_path):
+    n = len(graph.nodes)
+    d = len(circular_path)
+
+    # Initialize the certificates array
+    cert = [set() for _ in range(n)]
+
+    # Convert circular_path to a set for faster membership tests
+    circular_set = set(circular_path)
+
+    # Loop over vertices
+    for i in range(n):
+        # Initialize the set of indices
         Sk = set()
 
-        # 5. Loop for each edge
-        for j in range(len(graph.edges())):
-            # 6-9. Check conditions for the first edge
-            if j == 0:
-                if (circular_path[j], circular_path[(j + 1) % len(circular_path)]) == (circular_path[0], circular_path[1]):
-                    Sk.add(j)
+        # Loop over edges
+        for l in range(d):
+            # For the first edge (k=1)
+            if l == 0:
+                if is_only_edge(graph, circular_path, i, l):
+                    common_vertices = circular_set.intersection(circular_path[1:])
+                    if common_vertices:
+                        Sk.add(i)
+                        cert[i].update(common_vertices)
+            else:
+                # Check conditions for node-omnitig
+                if i in Sk and (i + 1) % d in Sk and not has_subgraph(graph, circular_path, i, l):
+                    common_cert = cert[i].intersection(cert[(i + 1) % d])
+                    if common_cert:
+                        Sk.add(i)
+                        cert[i].update(common_cert)
 
-            # 11. Check conditions for other edges
-            elif (j - 1) in Sk and j % len(circular_path) in Sk:
-                # Assume l is the length of the graph
-                l = len(graph.edges())
-                condition = True  # Modify this condition based on the pseudocode
-                if condition:
-                    Sk.add(j)
+        # Update the certificates array
+        Sk.add(i)
+        cert[i].update(Sk)
 
-            # 12. Check if Cert(vi) ∩ ... ∩ Cert(vi+k mod d) is not empty
-            if all(cert[circular_path[i]] for i in Sk):
-                Sk = Sk.union(Sk)
+    return cert
 
-        # 13. Update Sk
-        Sk = Sk.union({i})
+def is_only_edge(graph, circular_path, i, l):
+    edge = (circular_path[i], circular_path[(i + l) % len(circular_path)])
+    return graph.has_edge(*edge) and len(graph.in_edges(circular_path[i])) == 1 and len(graph.out_edges(circular_path[(i + l) % len(circular_path)])) == 1
 
-    # Print the result (you may modify this based on how you want to use the result)
-    print("Node-Safe Walk Indices:", Sk)
-    node_safe_walk_sequence = [circular_path[i] for i in Sk]
-    print("Node-Safe Walk Sequence:", node_safe_walk_sequence)
+def has_subgraph(graph, circular_path, i, l):
+    first_edge = (circular_path[i + l - 1] % len(circular_path), circular_path[(i + l) % len(circular_path)])
+    last_edge = (circular_path[(i + l) % len(circular_path)], circular_path[i])
 
-    # Visualize the graph
-    plt.figure(figsize=(12, 6))
-    pos = nx.spring_layout(graph)
-    nx.draw_networkx(graph, pos, with_labels=True, node_size=1200, node_color='r', edge_color='gray')
-    plt.title("Strongly Connected Directed Graph", color='forestgreen', fontsize=18, fontname='Calibri')
-    plt.show()
+    # Check if there is a subgraph with the specified conditions
+    return nx.has_path(graph, *first_edge) and nx.has_path(graph, *last_edge)
 
 # Example usage
-G = generate_strongly_connected_graph(5, 12, seed=42)
-node_safe_walk(G)
+num_nodes = 10
+graph = generate_strongly_connected_graph(num_nodes, seed=42)
+circular_path = list(nx.circular_layout(graph))
+certificates = compute_certificates(graph, circular_path)
+
+# Print certificates for each vertex
+for i, cert in enumerate(certificates):
+    print(f"Cert({i}): {cert}")
