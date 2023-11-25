@@ -65,7 +65,7 @@ class GTHome:         #for the functionalities of main screen...
         self.obj.SafeNodeG()
     def CloseWindow(self):
         self.root.destroy()
-        self.obj.root.destroy()
+        self.obj.destroy()
         MainMenu()
     def DisplayGT(self):
         self.root.geometry("900x900")
@@ -305,4 +305,7 @@ class Graphing:
         pyp.show()
         GTHome()
 
+    def SafeNodeG(self):
+        GTHome()
+        
 MainMenu()
