@@ -37,9 +37,20 @@ class MainMenu:         #for the functionalities of main screen...
         grp1.place(x=650,y=610)
         grp2.place(x=650, y=640)
         grp3.place(x=650, y=670)
-        ch_btn = tk.Button(self.root, text="Graph Theory Wonders", font=('Century Gothic', 18),command=self.OpenGTHome)
-        ch_btn.place(x=275, y=350)
+        self.ch_btn = tk.Button(self.root, text="Graph Theory Wonders", font=('Century Gothic', 18),command=self.OpenGTHome)
+        self.ch_btn.config(bg="dark sea green", fg="white")
+        self.ch_btn.place(x=275, y=350)
+        self.ch_btn.bind("<Enter>", self.on_enter)
+        self.ch_btn.bind("<Leave>", self.on_leave)
+
         self.root.mainloop()
+
+    def on_enter(self, e):
+        self.ch_btn.config(bg="thistle4", fg="ghost white")
+
+    def on_leave(self, e):
+        self.ch_btn.config(bg="plum4", fg="ghost white")
+
 class GTHome:         #for the functionalities of main screen...
     def __init__(self):
         self.root = tk.Tk()
@@ -70,12 +81,17 @@ class GTHome:         #for the functionalities of main screen...
         self.root.protocol("WM_DELETE_WINDOW",self.CloseWindow)
         self.root.configure(bg="Black")
         title_lbl = tk.Label(self.root,text = "Simulations of Graph Theory algorithms", font=('Century Gothic',25))
-        title_lbl.config(bg="Black", fg="White")
+        title_lbl.config(bg="Black", fg="lightpink4")
         simple_btn = tk.Button(self.root,text="Simple Graph", font=('Century Gothic',18),command=self.DisplaySimple)
         complete_btn = tk.Button(self.root, text="Complete Graph", font=('Century Gothic', 18),command=self.DisplayComplete)
         partite_btn = tk.Button(self.root, text="Bi And Tri Partite Graph", font=('Century Gothic', 18),command=self.DisplayPartite)
         havil_btn = tk.Button(self.root,text="Havil Hakimi With Graph", font=('Century Gothic', 18),command=self.DisplayHavil)
         safen_btn = tk.Button(self.root,text="Safe Node Walk",font=('Century Gothic', 18),command=self.DisplaySafe)
+        simple_btn.config(bg="plum4", fg="white")
+        complete_btn.config(bg="plum4", fg="white")
+        partite_btn.config(bg="plum4", fg="white")
+        havil_btn.config(bg="plum4", fg="white")
+        safen_btn.config(bg="plum4", fg="white")
         title_lbl.pack(pady=30)
         simple_btn.place(x=250, y=150)
         complete_btn.place(x=250, y=250)
@@ -86,7 +102,7 @@ class GTHome:         #for the functionalities of main screen...
 
 class Graphing:
     def CloseWindow(self):
-        self.root.destroy()
+        self.destroy()
         GTHome()
 
     def SimpleG(self):
@@ -96,7 +112,6 @@ class Graphing:
         graphnode = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11}
         graph.add_nodes_from(graphnode)
 
-        # E = zip(np.random.choice(list(graphnode), 11), np.random.choice(list(graphnode), 10))
         E = zip(np.random.choice(list(graphnode), 10), np.random.choice(list(graphnode), 10))
         graph.add_edges_from(E)
 
