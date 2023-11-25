@@ -51,6 +51,10 @@ class MainMenu:         #for the functionalities of main screen...
     def on_leave(self, e):
         self.ch_btn.config(bg="plum4", fg="ghost white")
 
+def buttonhov(button):
+    button.bind("<Enter>", lambda e: button.config(bg="thistle4", fg="ghost white"))
+    button.bind("<Leave>", lambda e: button.config(bg="plum4", fg="ghost white"))
+
 class GTHome:         #for the functionalities of main screen...
     def __init__(self):
         self.root = tk.Tk()
@@ -75,6 +79,9 @@ class GTHome:         #for the functionalities of main screen...
         self.root.destroy()
         # self.obj.destroy()
         MainMenu()
+
+
+
     def DisplayGT(self):
         self.root.geometry("900x900")
         self.root.title("Graph Algorithms")
@@ -87,6 +94,11 @@ class GTHome:         #for the functionalities of main screen...
         partite_btn = tk.Button(self.root, text="Bi And Tri Partite Graph", font=('Century Gothic', 18),command=self.DisplayPartite)
         havil_btn = tk.Button(self.root,text="Havil Hakimi With Graph", font=('Century Gothic', 18),command=self.DisplayHavil)
         safen_btn = tk.Button(self.root,text="Safe Node Walk",font=('Century Gothic', 18),command=self.DisplaySafe)
+        buttonhov(simple_btn)
+        buttonhov(complete_btn)
+        buttonhov(partite_btn)
+        buttonhov(havil_btn)
+        buttonhov(safen_btn)
         simple_btn.config(bg="plum4", fg="white")
         complete_btn.config(bg="plum4", fg="white")
         partite_btn.config(bg="plum4", fg="white")
@@ -99,6 +111,8 @@ class GTHome:         #for the functionalities of main screen...
         havil_btn.place(x=250, y=450)
         safen_btn.place(x=250, y=550)
         self.root.mainloop()
+
+
 
 class Graphing:
     def CloseWindow(self):
