@@ -1,7 +1,4 @@
 import tkinter as tk
-from functools import cmp_to_key
-import random
-import time
 import networkx as netx
 import matplotlib.pyplot as pyp
 import networkx as nx
@@ -307,5 +304,5 @@ class Graphing:
 
     def SafeNodeG(self):
         GTHome()
-        
+
 MainMenu()
