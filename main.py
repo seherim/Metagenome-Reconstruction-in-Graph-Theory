@@ -38,7 +38,7 @@ class MainMenu:         #for the functionalities of main screen...
         grp2.place(x=650, y=640)
         grp3.place(x=650, y=670)
         self.ch_btn = tk.Button(self.root, text="Graph Theory Wonders", font=('Century Gothic', 18),command=self.OpenGTHome)
-        self.ch_btn.config(bg="dark sea green", fg="white")
+        self.ch_btn.config(bg="plum4", fg="white")
         self.ch_btn.place(x=275, y=350)
         self.ch_btn.bind("<Enter>", self.on_enter)
         self.ch_btn.bind("<Leave>", self.on_leave)
@@ -162,6 +162,12 @@ class Graphing:
 
     def HavilG(self):
 
+        import networkx as nx
+        import matplotlib.pyplot as plt
+        import numpy as np
+        import pandas as pd
+        import tkinter as tk
+        from tkinter import scrolledtext
         def graphex(gg):
             while True:
                 gg = sorted(gg, reverse=True)
@@ -178,8 +184,13 @@ class Graphing:
                     if gg[i] < 0:
                         return False
 
-        def havelhakimi(degreeseq):
+        def havelhakimi(degreeseq, text_widget):
             iteration = 0
+            text_widget.insert(tk.END, f"Degree Sequence: {degreeseq}\n")
+            text_widget.yview(tk.END)
+            degreeseq = sorted(degreeseq, reverse=True)
+            text_widget.insert(tk.END, f"Degree Sequence: {degreeseq}\n")
+            text_widget.yview(tk.END)
             while True:
                 degreeseq = sorted(degreeseq, reverse=True)
                 if degreeseq[0] == 0 and degreeseq[-1] == 0:
@@ -194,6 +205,19 @@ class Graphing:
                         return False, degreeseq
                 iteration += 1
                 print(f"Degree Sequence: {degreeseq}")
+                degreeseq = sorted(degreeseq, reverse=True)
+                text_widget.insert(tk.END, f"Degree Sequence: {degreeseq}\n")
+                text_widget.yview(tk.END)
+
+        def open_tkinter_window():
+            root = tk.Tk()
+            root.title("Havil Hakimi Degree Sequence")
+            root.configure(bg="black")
+            root.geometry("600x400")
+            text_widget = tk.Text(root, width=70, height=40, wrap=tk.WORD, bg="black", fg="forest green",
+                                  font=("Calibre", 18))
+            text_widget.pack(padx=20, pady=20)
+            return root, text_widget
 
         # Original graph
         graph = nx.Graph()
@@ -211,23 +235,33 @@ class Graphing:
 
         # original degree sequence
         initialdegseqq = list(dict(graph.degree()).values())
-        print("Initial Degree Sequence:", initialdegseqq)
+
+        # Open tkinter window
+        root, text_widget = open_tkinter_window()
+
+        # Havel-Hakimi process
+        exists, new_sequence = havelhakimi(initialdegseqq, text_widget)
+
+        # Close tkinter window
+        def close_tkinter_window(root):
+            if root:
+                root.destroy()
 
         # initial graph show
         initial_position = nx.spring_layout(graph, k=1)
-        pyp.figure(figsize=(12, 6))
+        plt.figure(figsize=(12, 6))
         nx.draw_networkx(graph, initial_position, with_labels=True, node_size=1200, node_color='r', edge_color='gray')
-        pyp.title("- Initial Graph -")
+        plt.title("- Initial Graph -")
         print("Initial Degree Sequence:", initialdegseqq)
-        initialseq = "Constructed Graphical Sequence: " + str(initialdegseqq)
-        pyp.text(0.5, -0.1, initialseq, ha='center', va='center', transform=pyp.gca().transAxes)
-        pyp.show()
+        initialseq = "Initial Degree Sequence: " + str(initialdegseqq)
+        plt.text(0.5, -0.1, initialseq, ha='center', va='center', transform=plt.gca().transAxes)
+        plt.show()
 
         # Havel-Hakimi process
-        exists, new_sequence = havelhakimi(initialdegseqq)
+        # exists, new_sequence = havelhakimi(initialdegseqq, text_widget)
 
         while exists and not graphex(new_sequence):
-            print("Intermediate Sequence:", new_sequence)
+            print("Sequence:", new_sequence)
             exists, new_sequence = havelhakimi(new_sequence)
 
         if exists:
@@ -243,18 +277,19 @@ class Graphing:
             # Visualize the new graph
             new_position = nx.spring_layout(new_graph, k=1)
 
-            pyp.figure(figsize=(12, 6))
+            plt.figure(figsize=(12, 6))
             nx.draw_networkx(new_graph, new_position, with_labels=True, node_size=1200, node_color='r',
                              edge_color='gray')
-            pyp.title("- Graph Constructed Using Havel-Hakimi -")
+            plt.title("- Graph Constructed Using Havel-Hakimi -")
             finalseq = "Constructed Graphical Sequence: " + str(new_sequence)
-            pyp.text(0.5, -0.1, finalseq, ha='center', va='center', transform=pyp.gca().transAxes)
+            plt.text(0.5, -0.1, finalseq, ha='center', va='center', transform=plt.gca().transAxes)
 
-            pyp.show()
+            plt.show()
 
         else:
             finalwrong = "The degree sequence is not graphical."
-            pyp.text(0.4, 0.1, finalwrong, ha='center', va='center', transform=pyp.gca().transAxes)
+            plt.text(0.4, 0.1, finalwrong, ha='center', va='center', transform=plt.gca().transAxes)
+
         GTHome()
 
     def PartiteG(self):

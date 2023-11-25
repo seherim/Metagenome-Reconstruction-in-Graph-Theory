@@ -2,7 +2,8 @@ import networkx as nx
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-
+import tkinter as tk
+from tkinter import scrolledtext
 def graphex(gg):
     while True:
         gg = sorted(gg, reverse=True)
@@ -19,8 +20,13 @@ def graphex(gg):
             if gg[i] < 0:
                 return False
 
-def havelhakimi(degreeseq):
+def havelhakimi(degreeseq, text_widget):
     iteration = 0
+    text_widget.insert(tk.END, f"Degree Sequence: {degreeseq}\n")
+    text_widget.yview(tk.END)
+    degreeseq = sorted(degreeseq, reverse=True)
+    text_widget.insert(tk.END, f"Degree Sequence: {degreeseq}\n")
+    text_widget.yview(tk.END)
     while True:
         degreeseq = sorted(degreeseq, reverse=True)
         if degreeseq[0] == 0 and degreeseq[-1] == 0:
@@ -35,6 +41,18 @@ def havelhakimi(degreeseq):
                 return False, degreeseq
         iteration += 1
         print(f"Degree Sequence: {degreeseq}")
+        degreeseq = sorted(degreeseq, reverse=True)
+        text_widget.insert(tk.END, f"Degree Sequence: {degreeseq}\n")
+        text_widget.yview(tk.END)
+def open_tkinter_window():
+    root = tk.Tk()
+    root.title("Havil Hakimi Degree Sequence")
+    root.configure(bg="black")
+    root.geometry("600x400")
+    text_widget = tk.Text(root, width=70, height=40, wrap=tk.WORD, bg="black", fg="forest green", font=("Calibre", 18))
+    text_widget.pack(padx=20, pady=20)
+    return root, text_widget
+
 
 # Original graph
 graph = nx.Graph()
@@ -52,7 +70,17 @@ graph.remove_edges_from(nx.selfloop_edges(graph))
 
 # original degree sequence
 initialdegseqq = list(dict(graph.degree()).values())
-print("Initial Degree Sequence:", initialdegseqq)
+
+# Open tkinter window
+root, text_widget = open_tkinter_window()
+
+# Havel-Hakimi process
+exists, new_sequence = havelhakimi(initialdegseqq, text_widget)
+
+# Close tkinter window
+def close_tkinter_window(root):
+    if root:
+        root.destroy()
 
 # initial graph show
 initial_position = nx.spring_layout(graph, k=1)
@@ -65,7 +93,7 @@ plt.text(0.5, -0.1, initialseq, ha='center', va='center', transform=plt.gca().tr
 plt.show()
 
 # Havel-Hakimi process
-exists, new_sequence = havelhakimi(initialdegseqq)
+#exists, new_sequence = havelhakimi(initialdegseqq, text_widget)
 
 while exists and not graphex(new_sequence):
     print("Sequence:", new_sequence)
