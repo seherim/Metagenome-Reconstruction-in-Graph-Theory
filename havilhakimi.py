@@ -20,6 +20,7 @@ def graphex(gg):
                 return False
 
 def havelhakimi(degreeseq):
+    iteration = 0
     while True:
         degreeseq = sorted(degreeseq, reverse=True)
         if degreeseq[0] == 0 and degreeseq[-1] == 0:
@@ -32,6 +33,8 @@ def havelhakimi(degreeseq):
             degreeseq[i] -= 1
             if degreeseq[i] < 0:
                 return False, degreeseq
+        iteration += 1
+        print(f"Degree Sequence: {degreeseq}")
 
 # Original graph
 graph = nx.Graph()
@@ -57,7 +60,7 @@ plt.figure(figsize=(12, 6))
 nx.draw_networkx(graph, initial_position, with_labels=True, node_size=1200, node_color='r', edge_color='gray')
 plt.title("- Initial Graph -")
 print("Initial Degree Sequence:", initialdegseqq)
-initialseq = "Constructed Graphical Sequence: " + str(initialdegseqq)
+initialseq = "Initial Degree Sequence: " + str(initialdegseqq)
 plt.text(0.5, -0.1, initialseq, ha='center', va='center', transform=plt.gca().transAxes)
 plt.show()
 
@@ -65,7 +68,7 @@ plt.show()
 exists, new_sequence = havelhakimi(initialdegseqq)
 
 while exists and not graphex(new_sequence):
-    print("Intermediate Sequence:", new_sequence)
+    print("Sequence:", new_sequence)
     exists, new_sequence = havelhakimi(new_sequence)
 
 if exists:

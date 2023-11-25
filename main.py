@@ -73,7 +73,7 @@ class GTHome:         #for the functionalities of main screen...
         self.obj.SafeNodeG()
     def CloseWindow(self):
         self.root.destroy()
-        self.obj.destroy()
+        # self.obj.destroy()
         MainMenu()
     def DisplayGT(self):
         self.root.geometry("900x900")
@@ -179,6 +179,7 @@ class Graphing:
                         return False
 
         def havelhakimi(degreeseq):
+            iteration = 0
             while True:
                 degreeseq = sorted(degreeseq, reverse=True)
                 if degreeseq[0] == 0 and degreeseq[-1] == 0:
@@ -191,6 +192,8 @@ class Graphing:
                     degreeseq[i] -= 1
                     if degreeseq[i] < 0:
                         return False, degreeseq
+                iteration += 1
+                print(f"Degree Sequence: {degreeseq}")
 
         # Original graph
         graph = nx.Graph()
