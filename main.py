@@ -179,9 +179,7 @@ class Graphing:
         import networkx as nx
         import matplotlib.pyplot as plt
         import numpy as np
-        import pandas as pd
         import tkinter as tk
-        from tkinter import scrolledtext
         def graphex(gg):
             while True:
                 gg = sorted(gg, reverse=True)
@@ -427,13 +425,10 @@ class Graphing:
         G = create_graph()
         node_safe_walk = find_node_safe_walk(G)
         print("Node-safe walk:", node_safe_walk)
-
         # Final visualization
         visualize_step(G, node_safe_walk)
         pyp.show()
-        pyp.close('all')
-        # Display the entire safe node walk sequence in a new Tkinter window
-        # self.display_walk_sequence(node_safe_walk)
+        # pyp.close('all')
         GTHome()
 
 MainMenu()
