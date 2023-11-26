@@ -4,7 +4,7 @@ import matplotlib.pyplot as pyp
 import networkx as nx
 import numpy as np
 import pandas as pd
-
+import random
 from networkx.drawing.layout import bipartite_layout
 
 
@@ -370,6 +370,70 @@ class Graphing:
         GTHome()
 
     def SafeNodeG(self):
+        def create_graph():
+            G = nx.Graph()
+            # Add edges to create a connected graph
+            G.add_edges_from(
+                [(0, 1), (1, 2), (2, 3), (3, 4), (4, 5), (5, 6), (6, 7), (7, 8), (8, 9), (9, 10), (10, 11), (11, 0),
+                 (0, 2), (2, 4), (4, 6), (6, 8), (8, 10), (10, 1), (1, 3), (3, 5), (5, 7), (7, 9), (9, 11), (11, 0),
+                 (1, 4), (4, 7), (7, 10), (10, 1), (2, 5), (5, 8), (8, 11), (11, 2), (3, 6), (6, 9), (9, 0), (0, 3)])
+
+            return G
+
+        def visualize_step(G, walked_nodes):
+            pos = nx.spring_layout(G)
+            nx.draw(G, pos, with_labels=True, node_size=700, node_color='lightblue')
+
+            edges = [(walked_nodes[i], walked_nodes[i + 1]) for i in range(len(walked_nodes) - 1)]
+            nx.draw_networkx_nodes(G, pos, nodelist=walked_nodes, node_color='red', node_size=700)
+            nx.draw_networkx_edges(G, pos, edgelist=edges, edge_color='red', width=2)
+
+            pyp.show(block=False)
+            pyp.pause(1)  # Pause for 1 second before moving to the next step
+            pyp.clf()  # Clear the plot for the next step
+
+        def find_node_safe_walk(G):
+            # Select a random starting node
+            start_node = random.choice(list(G.nodes))
+            current_node = start_node
+            walked_nodes = [current_node]
+
+            visualize_step(G, walked_nodes)
+
+            while set(walked_nodes) != set(G.nodes):
+                neighbors = list(G.neighbors(current_node))
+                if not neighbors:
+                    break
+
+                next_node = random.choice(neighbors)
+                walked_nodes.append(next_node)
+
+                sub_walk_found = False
+                for cycle in nx.simple_cycles(G):
+                    if set(walked_nodes).issubset(set(cycle)):
+                        sub_walk_found = True
+                        break
+
+                    if not sub_walk_found:
+                        break
+
+                current_node = next_node
+                visualize_step(G, walked_nodes)
+
+            return walked_nodes
+
+        # Example usage
+
+        G = create_graph()
+        node_safe_walk = find_node_safe_walk(G)
+        print("Node-safe walk:", node_safe_walk)
+
+        # Final visualization
+        visualize_step(G, node_safe_walk)
+        pyp.show()
+        pyp.close('all')
+        # Display the entire safe node walk sequence in a new Tkinter window
+        # self.display_walk_sequence(node_safe_walk)
         GTHome()
 
 MainMenu()
